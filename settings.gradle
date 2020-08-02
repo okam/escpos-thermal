@@ -1,0 +1,3 @@
+rootProject.name = 'escpos-thermal'
+include 'lib'
+

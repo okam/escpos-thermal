@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <line-feed />
+    <align mode="center">
+        <bold>
+            <text-line size="1:1">${title()}</text-line>
+        </bold>
+        <line-feed />
+        <small>
+            <text-line>${subtitle()}</text-line>
+        </small>
+        <line-feed />
+        <white-mode>
+            <text-line size="1:1">${description()}</text-line>
+        </white-mode>
+        <line-feed />
+        <small>
+            <text-line>下单时间：${date()?number_to_datetime?string("yyyy-MM-dd hh:mm:ss")}</text-line>
+        </small>
+        <line-feed />
+        <underline>
+            <text-line>备注：${note()}</text-line>
+        </underline>
+    </align>
+    <line-feed />
+    <bold>
+        <table>
+            <#list items() as item>
+            <table-row padding="0:1">
+                <table-cell length="22" align="left" size="0:0" padding="0:1">${item.name()}</table-cell>
+                <table-cell length="2" align="center" size="0:0">${item.quantity()}</table-cell>
+                <table-cell length="6" align="right" size="0:0" padding="1:0">${item.price()}</table-cell>
+            </table-row>
+            </#list>
+        </table>
+    </bold>
+    <line-feed />
+    <align mode="center">
+        <qrcode ecl="M">${qrcode()}</qrcode>
+    </align>
+    <line-feed />
+    <paper-cut/>
+</document>

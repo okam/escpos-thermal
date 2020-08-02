@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id "com.github.sherter.google-java-format" version "0.8"
+    id "com.google.protobuf" version "0.8.10"
+}
+
+def versions = [
+    'guava' : '28.2-jre',
+    'junit_jupiter' : '5.3.2',
+    'grpc'          : '1.28.0',
+    'grpc_foundation' : '1.7.0'
+]
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+
+    implementation "com.google.guava:guava:${versions.guava}"
+    implementation "io.grpc:grpc-protobuf:${versions.grpc}"
+    implementation "io.grpc:grpc-stub:${versions.grpc}"
+    implementation "org.freemarker:freemarker:2.3.28"
+
+    // testing
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    testImplementation "com.google.truth:truth:0.42"
+    testImplementation "org.mockito:mockito-core:2.23.4"
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit_jupiter}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${versions.junit_jupiter}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${versions.junit_jupiter}"
+}
+
+// Tests must be configured if using junit 5.
+test {
+    useJUnitPlatform()
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.7.1"
+    }
+
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${versions.grpc}"
+        }
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {
+                    // Write the generated files under '/java' directory
+                    outputSubDir = 'java'
+                }
+            }
+        }
+    }
+}
+
+compileJava {
+    dependsOn "googleJavaFormat"
+    options.compilerArgs += ["-parameters"]
+}
