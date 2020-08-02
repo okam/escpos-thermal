@@ -1,18 +1,11 @@
 plugins {
     id 'java'
     id "com.github.sherter.google-java-format" version "0.8"
-    id "com.google.protobuf" version "0.8.10"
+    id 'maven-publish'
 }
 
-def versions = [
-    'guava' : '28.2-jre',
-    'junit_jupiter' : '5.3.2',
-    'grpc'          : '1.28.0',
-    'grpc_foundation' : '1.7.0'
-]
-
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'com.github.okam'
+version '1.0'
 
 sourceCompatibility = 1.8
 
@@ -23,9 +16,7 @@ repositories {
 dependencies {
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 
-    implementation "com.google.guava:guava:${versions.guava}"
-    implementation "io.grpc:grpc-protobuf:${versions.grpc}"
-    implementation "io.grpc:grpc-stub:${versions.grpc}"
+    implementation "com.google.guava:guava:28.2-jre"
     implementation "org.freemarker:freemarker:2.3.28"
 
     // testing
@@ -34,9 +25,9 @@ dependencies {
     testImplementation "com.google.truth:truth:0.42"
     testImplementation "org.mockito:mockito-core:2.23.4"
     testImplementation 'org.mockito:mockito-inline:2.13.0'
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit_jupiter}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${versions.junit_jupiter}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${versions.junit_jupiter}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.3.2"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.2"
 }
 
 // Tests must be configured if using junit 5.
@@ -44,30 +35,39 @@ test {
     useJUnitPlatform()
 }
 
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.7.1"
-    }
-
-    plugins {
-        grpc {
-            artifact = "io.grpc:protoc-gen-grpc-java:${versions.grpc}"
-        }
-    }
-
-    generateProtoTasks {
-        all().each { task ->
-            task.plugins {
-                grpc {
-                    // Write the generated files under '/java' directory
-                    outputSubDir = 'java'
-                }
-            }
-        }
-    }
-}
-
 compileJava {
     dependsOn "googleJavaFormat"
     options.compilerArgs += ["-parameters"]
+}
+
+// publish to Mavel
+publishing {
+    publications {
+        maven(MavenPublication) {
+            pom {
+                name = 'ESCPOS Templating in Java'
+                description = 'A Java base ESCPOS printing template'
+                url = 'https://github.com/okam/escpos-thermal'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/okam/escpos-thermal/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'okam'
+                        name = 'Leo Occam'
+                        email = 'occam.leo@gmail.com'
+                    }
+                }
+            }
+
+            groupId = 'com.github.okam'
+            artifactId = 'escpos-thermal'
+            version = '1.0'
+
+            from components.java
+        }
+    }
 }
